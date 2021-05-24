@@ -34,5 +34,13 @@
         $('#leave-chat').click(() => {
             leaveVoiceChat();
         });
+
+        $('#chat-password').keyup(function(e){
+            if(e.keyCode === 13)
+            {
+                leaveVoiceChat();
+                joinVoiceChat($('#chat-password').val());
+            }
+        });
     });
 </script>
