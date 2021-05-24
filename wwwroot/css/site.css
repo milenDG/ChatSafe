@@ -2,7 +2,7 @@
 for details on configuring this project to bundle and minify static web assets. */
 @font-face {
     font-family: 'SpaceFont'; /*a name to be used later*/
-    src: url('../font/SpaceFont.ttf'); /*URL to font*/
+    src: url('../font/SpaceFont.otf'); /*URL to font*/
 }
 
 .space-font {
@@ -104,7 +104,7 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
-    background-color: dimgray;
+    background-color: #5677ae;
     color: lightcyan;
     font-family: 'Quicksand', cursive;
     font-weight: 400
@@ -119,7 +119,6 @@ body {
     font-size: 22pt;
     color: aliceblue;
     font-family: 'SpaceFont', cursive;
-    background-color:
 }
 
 .sub-text {
@@ -128,4 +127,8 @@ body {
 
 video {
     margin: 10px;
+}
+
+.bg-dark {
+    background-color: #203354 !important;
 }
