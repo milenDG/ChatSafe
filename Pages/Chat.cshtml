@@ -1,0 +1,38 @@
+﻿@page
+@model ChatSafe.Pages.ChatModel
+@{
+    ViewData["Title"] = "Video Chat";
+}
+
+
+<div class="row text-center">
+    <div class="buttonHolder col-md m-2" id="chat-password-holder">
+        <input type="password" class="form-control" id="chat-password" placeholder="Type Password">
+    </div>
+    <div class="buttonHolder col-md m-2" id="join-chat">
+        <a class="white">
+            <p><span class="bg"></span><span class="base"></span><span class="text">Join Chat</span></p>
+        </a>
+    </div>
+    <div class="buttonHolder col-sm m-2" id="leave-chat">
+        <a class="white">
+            <p><span class="bg"></span><span class="base"></span><span class="text">Leave</span></p>
+        </a>
+    </div>
+</div>
+<hr />
+<div class="container-fluid text-center mt-3">
+    <div class=" container-fluid" id="video-streams"></div>
+</div>
+<script>
+    $(document).ready(() => {
+        $('#join-chat').click(() => {
+            leaveVoiceChat();
+            joinVoiceChat($('#chat-password').val());
+        });
+
+        $('#leave-chat').click(() => {
+            leaveVoiceChat();
+        });
+    });
+</script>
