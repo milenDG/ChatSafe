@@ -75,7 +75,7 @@ function joinVoiceChat(chat) {
         /* once the user has given us access to their
          * microphone/camcorder, join the channel and start peering up */
         signalRConn.invoke('JoinChat', chatName);
-    });
+    }, function () { console.log('Could not acquire camera permission'); });
 }
 
 /**
@@ -84,7 +84,7 @@ function joinVoiceChat(chat) {
 function leaveVoiceChat() {
     // Make sure that the chat is running first
     if (!chatRunning) {
-        //console.log('Voice chat must be running in order to be left');
+        console.log('Voice chat must be running in order to be left');
         return;
     }
 
@@ -153,11 +153,11 @@ function initializeSignalR() {
  * @param {any} createOffer whether the current client needs to create the actual WebRTC offer
  */
 signalRConn.on('AddToCall', (peerId, createOffer) => {
-    /*if (peerId in peers) {
-        /* This could happen if the user joins multiple channels where the other peer is also in.
+    if (peerId in peers) {
+        /* This could happen if the user joins multiple channels where the other peer is also in. */
         console.log('Already connected to peer ', peerId);
         return;
-    }*/
+    }
 
     // Create a new peer connection for the new client joining the voice chat
     var peerConnection = new RTCPeerConnection(
@@ -318,8 +318,8 @@ function setupLocalMedia(callback, errorBack) {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ "audio": USE_AUDIO, "video": USE_VIDEO })
-            .then(streamAvailable)
-            .catch(function () { streamDenied(errorBack); }); /* user denied access to a/v */;
+            .then(function (stream) { streamAvailable(stream, callback); })
+            .catch(function () { streamDenied(errorBack, callback); }); /* user denied access to a/v */;
     } else {
         /* Ask user for permission to use the computers microphone and/or camera, 
          * attach it to an <audio> or <video> tag if they give us access. */
@@ -335,12 +335,12 @@ function setupLocalMedia(callback, errorBack) {
 
         // Start capturing the user media
         navigator.userMedia({ audio: true, video: { facingMode: 'user' } },
-            streamAvailable, /* user accepted access to a/v */
+            function (stream) { streamAvailable(stream, callback); }, /* user accepted access to a/v */
             function () { streamDenied(errorBack, callback); }); /* user denied access to a/v */
     }
 }
 
-function streamAvailable(stream) {
+function streamAvailable(stream, callback) {
     // Save the local media stream
     localMediaStream = stream;
 

@@ -26,12 +26,11 @@
 </div>
 <script>
     $(document).ready(() => {
-        $('#join-chat').click(() => {
-            leaveVoiceChat();
+        $('#join-chat').click(function() {
             joinVoiceChat($('#chat-password').val());
         });
 
-        $('#leave-chat').click(() => {
+        $('#leave-chat').click(function() {
             leaveVoiceChat();
         });
 
