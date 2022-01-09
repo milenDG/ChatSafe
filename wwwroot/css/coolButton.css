@@ -14,7 +14,8 @@
     text-decoration: none;
     box-shadow: 0 0 0 1px inset rgba(236, 232, 225, 0.3);
     position: relative;
-    font-family: 'SpaceFont', cursive;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    font-weight: 900;
 }
 
 .buttonHolder a.white:hover > p { color: #ece8e1; }

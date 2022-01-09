@@ -316,44 +316,58 @@ function setupLocalMedia(callback, errorBack) {
         return;
     }
 
-    /* Ask user for permission to use the computers microphone and/or camera, 
-     * attach it to an <audio> or <video> tag if they give us access. */
-    navigator.getUserMedia = (navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia ||
-        navigator.msGetUserMedia);
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ "audio": USE_AUDIO, "video": USE_VIDEO })
+            .then(streamAvailable)
+            .catch(function () { streamDenied(errorBack); }); /* user denied access to a/v */;
+    } else {
+        /* Ask user for permission to use the computers microphone and/or camera, 
+         * attach it to an <audio> or <video> tag if they give us access. */
+        navigator.userMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
 
-    // Start capturing the user media
-    navigator.getUserMedia({ "audio": USE_AUDIO, "video": USE_VIDEO },
-        function (stream) { /* user accepted access to a/v */
+        if (!navigator.userMedia) {
+            alert('Please Update or Use Different Browser');
+            return;
+        }
 
-            // Save the local media stream
-            localMediaStream = stream;
+        // Start capturing the user media
+        navigator.userMedia({ audio: true, video: { facingMode: 'user' } },
+            streamAvailable, /* user accepted access to a/v */
+            function () { streamDenied(errorBack, callback); }); /* user denied access to a/v */
+    }
+}
 
-            // Check whether a video connection needs to be used
-            const myMedia = USE_VIDEO ? $('<video width="320" height="240" muted>') : $('<audio>');
+function streamAvailable(stream) {
+    // Save the local media stream
+    localMediaStream = stream;
 
-            // Make the media play instantly
-            myMedia.attr('autoplay', 'autoplay');
+    // Check whether a video connection needs to be used
+    const myMedia = USE_VIDEO ? $('<video width="320" height="240" muted>') : $('<audio>');
 
-            // Append the media element to the media node (audio list)
-            videoList.append(myMedia);
+    // Make the media play instantly
+    myMedia.attr('autoplay', 'autoplay');
 
-            // Attach the stream to the video
-            myMedia[0].srcObject = stream;
+    // Append the media element to the media node (audio list)
+    videoList.append(myMedia);
 
-            // Execute the success callback
-            if (callback) callback();
-        },
-        function () { /* user denied access to a/v */
-            console.log('Access denied for audio/video');
+    // Attach the stream to the video
+    myMedia[0].srcObject = stream;
 
-            // If we haven't reached the max num of trial, try again
-            if (startingTrials <= 2) {
-                setupLocalMedia(callback, errorBack);
-            }
+    // Execute the success callback
+    if (callback) callback();
+}
 
-            // Execute the error callback
-            if (errorBack) errorBack();
-        });
+function streamDenied(errorBack, callback) {
+    console.log('Access denied for audio/video');
+
+    // If we haven't reached the max num of trial, try again
+    if (startingTrials <= 2) {
+        setupLocalMedia(callback, errorBack);
+    }
+
+    // Execute the error callback
+    if (errorBack) errorBack();
 }
